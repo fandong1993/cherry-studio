@@ -7,6 +7,7 @@ export * from './clients/providers/openai/OpenAIAPIClient'
 export * from './clients/providers/anthropic/AnthropicAPIClient'
 export * from './clients/providers/gemini/GeminiAPIClient'
 export * from './clients/providers/aws/AwsBedrockAPIClient'
+export * from './utils/modelUtils'
 
 // Convenience exports
 export { ApiClientFactory as ClientFactory } from './clients/factory/ApiClientFactory'

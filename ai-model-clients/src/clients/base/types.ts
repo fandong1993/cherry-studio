@@ -1,20 +1,9 @@
 import { Provider, Model, GenerateImageParams, Message, FetchChatCompletionOptions } from '../../types'
-import {
-  SdkInstance,
-  SdkParams,
-  SdkRawOutput,
-  SdkRawChunk,
-  SdkMessageParam,
-  SdkToolCall,
-  SdkTool,
-  SdkModel,
-  RequestOptions
-} from '../../types/sdk'
 
 /**
  * Request transformer interface for converting internal parameters to SDK-specific format
  */
-export interface RequestTransformer<TSdkParams extends SdkParams, TMessageParam extends SdkMessageParam> {
+export interface RequestTransformer<TSdkParams, TMessageParam> {
   transformRequest(params: CompletionParams): Promise<TSdkParams>
   transformMessages(messages: Message[]): TMessageParam[]
 }
@@ -22,7 +11,7 @@ export interface RequestTransformer<TSdkParams extends SdkParams, TMessageParam 
 /**
  * Response chunk transformer interface for processing streaming responses
  */
-export interface ResponseChunkTransformer<TRawChunk extends SdkRawChunk> {
+export interface ResponseChunkTransformer<TRawChunk> {
   transformChunk(chunk: TRawChunk): ChunkData
 }
 
@@ -62,30 +51,22 @@ export interface ChunkData {
 /**
  * API client interface for different providers
  */
-export interface ApiClient<
-  TSdkInstance = any,
-  TSdkParams extends SdkParams = SdkParams,
-  TRawOutput extends SdkRawOutput = SdkRawOutput,
-  TRawChunk extends SdkRawChunk = SdkRawChunk,
-  TMessageParam extends SdkMessageParam = SdkMessageParam,
-  TToolCall extends SdkToolCall = SdkToolCall,
-  TSdkSpecificTool extends SdkTool = SdkTool
-> {
+export interface ApiClient {
   provider: Provider
 
   // Core methods
-  createCompletions(payload: TSdkParams): Promise<TRawOutput>
+  createCompletions(payload: any): Promise<any>
   generateImage?(params: GenerateImageParams): Promise<string[]>
-  listModels(): Promise<SdkModel[]>
+  listModels(): Promise<any[]>
 
   // SDK related methods
-  getSdkInstance(): Promise<TSdkInstance> | TSdkInstance
+  getSdkInstance(): Promise<any> | any
   getBaseURL(): string
   getApiKey(): string
 
   // Transformers
-  getRequestTransformer(): RequestTransformer<TSdkParams, TMessageParam>
-  getResponseChunkTransformer(): ResponseChunkTransformer<TRawChunk>
+  getRequestTransformer(): RequestTransformer<any, any>
+  getResponseChunkTransformer(): ResponseChunkTransformer<any>
 
   // Utility methods
   getClientCompatibilityType(model?: Model): string[]

@@ -1,35 +1,14 @@
 import { Provider, Model, GenerateImageParams, FetchChatCompletionOptions } from '../../types'
-import {
-  SdkInstance,
-  SdkParams,
-  SdkRawOutput,
-  SdkRawChunk,
-  SdkMessageParam,
-  SdkToolCall,
-  SdkTool,
-  SdkModel,
-  RequestOptions
-} from '../../types/sdk'
 import { ApiClient, RequestTransformer, ResponseChunkTransformer, CompletionParams, ChunkData } from './types'
 
 /**
  * Abstract base class for API clients.
  * Provides common functionality and structure for specific client implementations.
  */
-export abstract class BaseApiClient<
-  TSdkInstance extends SdkInstance = SdkInstance,
-  TSdkParams extends SdkParams = SdkParams,
-  TRawOutput extends SdkRawOutput = SdkRawOutput,
-  TRawChunk extends SdkRawChunk = SdkRawChunk,
-  TMessageParam extends SdkMessageParam = SdkMessageParam,
-  TToolCall extends SdkToolCall = SdkToolCall,
-  TSdkSpecificTool extends SdkTool = SdkTool
-> implements ApiClient<TSdkInstance, TSdkParams, TRawOutput, TRawChunk, TMessageParam, TToolCall, TSdkSpecificTool>
-{
+export abstract class BaseApiClient implements ApiClient {
   public provider: Provider
   protected host: string
   protected apiKey: string
-  protected sdkInstance?: TSdkInstance
 
   constructor(provider: Provider) {
     this.provider = provider
@@ -54,11 +33,11 @@ export abstract class BaseApiClient<
   }
 
   // Abstract methods that must be implemented by subclasses
-  abstract createCompletions(payload: TSdkParams, options?: RequestOptions): Promise<TRawOutput>
-  abstract getSdkInstance(): Promise<TSdkInstance> | TSdkInstance
-  abstract getRequestTransformer(): RequestTransformer<TSdkParams, TMessageParam>
-  abstract getResponseChunkTransformer(): ResponseChunkTransformer<TRawChunk>
-  abstract listModels(): Promise<SdkModel[]>
+  abstract createCompletions(payload: any, options?: any): Promise<any>
+  abstract getSdkInstance(): Promise<any> | any
+  abstract getRequestTransformer(): RequestTransformer<any, any>
+  abstract getResponseChunkTransformer(): ResponseChunkTransformer<any>
+  abstract listModels(): Promise<any[]>
 
   // Optional methods
   async generateImage?(params: GenerateImageParams): Promise<string[]> {
@@ -68,7 +47,6 @@ export abstract class BaseApiClient<
   // Utility methods
   public createAbortController(messageId?: string): AbortController {
     const controller = new AbortController()
-    // You can add logic here to track abort controllers if needed
     return controller
   }
 

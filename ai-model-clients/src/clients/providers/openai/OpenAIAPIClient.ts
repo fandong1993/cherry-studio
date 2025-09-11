@@ -3,54 +3,34 @@ import { Stream } from 'openai/streaming'
 import { BaseApiClient } from '../../base/BaseApiClient'
 import { RequestTransformer, ResponseChunkTransformer, CompletionParams, ChunkData } from '../../base/types'
 import { Provider, Model, GenerateImageParams, Message } from '../../../types'
-import {
-  OpenAISdkParams,
-  OpenAISdkRawOutput,
-  OpenAISdkRawChunk,
-  OpenAISdkMessageParam,
-  SdkModel,
-  RequestOptions
-} from '../../../types/sdk'
 
 /**
  * OpenAI API client implementation
  */
-export class OpenAIAPIClient extends BaseApiClient<
-  OpenAI,
-  OpenAISdkParams,
-  OpenAISdkRawOutput,
-  OpenAISdkRawChunk,
-  OpenAISdkMessageParam
-> {
+export class OpenAIAPIClient extends BaseApiClient {
+  private openaiClient?: OpenAI
+
   constructor(provider: Provider) {
     super(provider)
   }
 
   async getSdkInstance(): Promise<OpenAI> {
-    if (!this.sdkInstance) {
-      this.sdkInstance = new OpenAI({
+    if (!this.openaiClient) {
+      this.openaiClient = new OpenAI({
         apiKey: this.apiKey,
         baseURL: this.host,
         timeout: this.getTimeout(),
         defaultHeaders: this.getDefaultHeaders()
       })
     }
-    return this.sdkInstance
+    return this.openaiClient
   }
 
-  async createCompletions(payload: OpenAISdkParams, options?: RequestOptions): Promise<OpenAISdkRawOutput> {
+  async createCompletions(payload: any): Promise<any> {
     const sdk = await this.getSdkInstance()
     
     try {
-      if (payload.stream === true) {
-        // Type assertion needed due to OpenAI SDK type constraints
-        const streamPayload = { ...payload, stream: true as const }
-        return sdk.chat.completions.create(streamPayload, options) as Promise<Stream<OpenAI.Chat.Completions.ChatCompletionChunk>>
-      } else {
-        // Type assertion for non-streaming
-        const nonStreamPayload = { ...payload, stream: false as const }
-        return sdk.chat.completions.create(nonStreamPayload, options) as Promise<OpenAI.ChatCompletion>
-      }
+      return await sdk.chat.completions.create(payload)
     } catch (error) {
       throw this.handleApiError(error)
     }
@@ -75,7 +55,7 @@ export class OpenAIAPIClient extends BaseApiClient<
     }
   }
 
-  async listModels(): Promise<SdkModel[]> {
+  async listModels(): Promise<any[]> {
     const sdk = await this.getSdkInstance()
     
     try {
@@ -86,16 +66,15 @@ export class OpenAIAPIClient extends BaseApiClient<
     }
   }
 
-  getRequestTransformer(): RequestTransformer<OpenAISdkParams, OpenAISdkMessageParam> {
+  getRequestTransformer(): RequestTransformer<any, any> {
     return new OpenAIRequestTransformer()
   }
 
-  getResponseChunkTransformer(): ResponseChunkTransformer<OpenAISdkRawChunk> {
+  getResponseChunkTransformer(): ResponseChunkTransformer<any> {
     return new OpenAIResponseChunkTransformer()
   }
 
   protected isCompatibleModel(model: Model): boolean {
-    // OpenAI client can handle OpenAI models and OpenAI-compatible models
     return model.provider === this.provider.id || 
            model.endpoint_type === 'openai' ||
            model.supported_endpoint_types?.includes('openai') || false
@@ -105,11 +84,11 @@ export class OpenAIAPIClient extends BaseApiClient<
 /**
  * OpenAI request transformer
  */
-class OpenAIRequestTransformer implements RequestTransformer<OpenAISdkParams, OpenAISdkMessageParam> {
-  async transformRequest(params: CompletionParams): Promise<OpenAISdkParams> {
+class OpenAIRequestTransformer implements RequestTransformer<any, any> {
+  async transformRequest(params: CompletionParams): Promise<any> {
     const { messages, model, temperature, maxTokens, topP, stream, tools, stop } = params
 
-    const openaiParams: OpenAISdkParams = {
+    const openaiParams: any = {
       model: model.id,
       messages: this.transformMessages(messages),
       stream: stream || false
@@ -139,10 +118,10 @@ class OpenAIRequestTransformer implements RequestTransformer<OpenAISdkParams, Op
     return openaiParams
   }
 
-  transformMessages(messages: Message[]): OpenAISdkMessageParam[] {
+  transformMessages(messages: Message[]): any[] {
     return messages.map(msg => {
-      const openaiMessage: OpenAISdkMessageParam = {
-        role: msg.role as any,
+      const openaiMessage: any = {
+        role: msg.role,
         content: msg.content
       }
 
@@ -151,7 +130,7 @@ class OpenAIRequestTransformer implements RequestTransformer<OpenAISdkParams, Op
         openaiMessage.content = [
           { type: 'text', text: msg.content },
           ...msg.images.map(imageUrl => ({
-            type: 'image_url' as const,
+            type: 'image_url',
             image_url: { url: imageUrl }
           }))
         ]
@@ -165,25 +144,23 @@ class OpenAIRequestTransformer implements RequestTransformer<OpenAISdkParams, Op
 /**
  * OpenAI response chunk transformer
  */
-class OpenAIResponseChunkTransformer implements ResponseChunkTransformer<OpenAISdkRawChunk> {
-  transformChunk(chunk: OpenAISdkRawChunk): ChunkData {
+class OpenAIResponseChunkTransformer implements ResponseChunkTransformer<any> {
+  transformChunk(chunk: any): ChunkData {
     // Handle non-streaming response
-    if ('choices' in chunk && !('delta' in chunk.choices[0])) {
-      const completion = chunk as OpenAI.ChatCompletion
+    if ('choices' in chunk && chunk.choices && !('delta' in chunk.choices[0])) {
       return {
         type: 'text',
-        content: completion.choices[0]?.message?.content || '',
-        usage: completion.usage ? {
-          promptTokens: completion.usage.prompt_tokens,
-          completionTokens: completion.usage.completion_tokens,
-          totalTokens: completion.usage.total_tokens
+        content: chunk.choices[0]?.message?.content || '',
+        usage: chunk.usage ? {
+          promptTokens: chunk.usage.prompt_tokens,
+          completionTokens: chunk.usage.completion_tokens,
+          totalTokens: chunk.usage.total_tokens
         } : undefined
       }
     }
 
     // Handle streaming response
-    const streamChunk = chunk as OpenAI.Chat.Completions.ChatCompletionChunk
-    const choice = streamChunk.choices[0]
+    const choice = chunk.choices?.[0]
     
     if (!choice) {
       return { type: 'done' }
@@ -191,14 +168,14 @@ class OpenAIResponseChunkTransformer implements ResponseChunkTransformer<OpenAIS
 
     const delta = choice.delta
 
-    if (delta.content) {
+    if (delta?.content) {
       return {
         type: 'text',
         content: delta.content
       }
     }
 
-    if (delta.tool_calls && delta.tool_calls.length > 0) {
+    if (delta?.tool_calls && delta.tool_calls.length > 0) {
       const toolCall = delta.tool_calls[0]
       return {
         type: 'function_call',
@@ -212,10 +189,10 @@ class OpenAIResponseChunkTransformer implements ResponseChunkTransformer<OpenAIS
     if (choice.finish_reason) {
       return {
         type: 'done',
-        usage: streamChunk.usage ? {
-          promptTokens: streamChunk.usage.prompt_tokens,
-          completionTokens: streamChunk.usage.completion_tokens,
-          totalTokens: streamChunk.usage.total_tokens
+        usage: chunk.usage ? {
+          promptTokens: chunk.usage.prompt_tokens,
+          completionTokens: chunk.usage.completion_tokens,
+          totalTokens: chunk.usage.total_tokens
         } : undefined
       }
     }
