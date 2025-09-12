@@ -1,0 +1,40 @@
+{
+  "name": "ai-model-clients",
+  "version": "1.0.0",
+  "description": "Standalone library for connecting to multiple AI language model providers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "node dist/examples/basic.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "openai",
+    "anthropic",
+    "gemini",
+    "aws-bedrock",
+    "language-models"
+  ],
+  "author": "Extracted from Cherry Studio",
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.41.0",
+    "@anthropic-ai/vertex-sdk": "^0.11.4",
+    "@aws-sdk/client-bedrock": "^3.840.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.840.0",
+    "@google/genai": "^1.0.1",
+    "openai": "^5.12.2",
+    "undici": "^6.21.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "@types/node": "^22.17.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
