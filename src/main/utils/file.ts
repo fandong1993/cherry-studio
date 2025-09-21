@@ -398,11 +398,15 @@ export function validateFileName(fileName: string, platform = process.platform):
  * @returns 合法的文件名
  */
 export function checkName(fileName: string): string {
-  const validation = validateFileName(fileName)
+  const baseName = path.basename(fileName)
+  const validation = validateFileName(baseName)
   if (!validation.valid) {
-    throw new Error(`Invalid file name: ${fileName}. ${validation.error}`)
+    // 自动清理非法字符，而不是抛出错误
+    const sanitized = sanitizeFilename(baseName)
+    logger.warn(`File name contains invalid characters, auto-sanitized: "${baseName}" -> "${sanitized}"`)
+    return sanitized
   }
-  return fileName
+  return baseName
 }
 
 /**
@@ -416,7 +420,7 @@ export function sanitizeFilename(fileName: string, replacement = '_'): string {
 
   // 移除或替换非法字符
   let sanitized = fileName
-    // eslint-disable-next-line no-control-regex
+    // oxlint-disable-next-line no-control-regex
     .replace(/[<>:"/\\|?*\x00-\x1f]/g, replacement) // Windows 非法字符
     .replace(/^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(\.|$)/i, replacement + '$2') // Windows 保留名
     .replace(/[\s.]+$/, '') // 移除末尾的空格和点

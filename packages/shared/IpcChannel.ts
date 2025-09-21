@@ -38,6 +38,7 @@ export enum IpcChannel {
   App_GetDiskInfo = 'app:get-disk-info',
   App_SetFullScreen = 'app:set-full-screen',
   App_IsFullScreen = 'app:is-full-screen',
+  App_GetSystemFonts = 'app:get-system-fonts',
 
   App_MacIsProcessTrusted = 'app:mac-is-process-trusted',
   App_MacRequestProcessTrust = 'app:mac-request-process-trust',
@@ -320,6 +321,10 @@ export enum IpcChannel {
 
   // CodeTools
   CodeTools_Run = 'code-tools:run',
+  CodeTools_GetAvailableTerminals = 'code-tools:get-available-terminals',
+  CodeTools_SetCustomTerminalPath = 'code-tools:set-custom-terminal-path',
+  CodeTools_GetCustomTerminalPath = 'code-tools:get-custom-terminal-path',
+  CodeTools_RemoveCustomTerminalPath = 'code-tools:remove-custom-terminal-path',
 
   // OCR
   OCR_ocr = 'ocr:ocr',

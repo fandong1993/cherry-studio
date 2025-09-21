@@ -362,8 +362,9 @@
       "translate": "Traduire en {{target_language}}",
       "translating": "Traduction en cours...",
       "upload": {
+        "attachment": "Télécharger la pièce jointe",
         "document": "Télécharger un document (le modèle ne prend pas en charge les images)",
-        "label": "Télécharger une image ou un document",
+        "image_or_document": "Télécharger une image ou un document",
         "upload_from_local": "Télécharger un fichier local..."
       },
       "url_context": "Contexte de la page web",
@@ -539,8 +540,8 @@
         "title": "Exécution de code"
       },
       "code_fancy_block": {
-        "label": "[to be translated]:花式代码块",
-        "tip": "[to be translated]:使用更美观的代码块样式，例如 HTML 卡片"
+        "label": "bloc de code fantaisie",
+        "tip": "Utiliser un style de bloc de code plus esthétique, comme une carte HTML"
       },
       "code_image_tools": {
         "label": "Activer l'outil d'aperçu",
@@ -659,13 +660,22 @@
       "title": "Sujet",
       "unpin": "Annuler le fixage"
     },
-    "translate": "Traduire"
+    "translate": "Traduire",
+    "web_search": {
+      "warning": {
+        "openai": "Le modèle GPT5 avec une intensité de réflexion minimale ne prend pas en charge la recherche sur Internet."
+      }
+    }
   },
   "code": {
     "auto_update_to_latest": "Vérifier les mises à jour et installer la dernière version",
     "bun_required_message": "L'exécution de l'outil en ligne de commande nécessite l'installation de l'environnement Bun",
     "cli_tool": "Outil CLI",
     "cli_tool_placeholder": "Sélectionnez l'outil CLI à utiliser",
+    "custom_path": "Chemin personnalisé",
+    "custom_path_error": "Échec de la définition du chemin de terminal personnalisé",
+    "custom_path_required": "Ce terminal nécessite la configuration d’un chemin personnalisé",
+    "custom_path_set": "Paramétrage personnalisé du chemin du terminal réussi",
     "description": "Lancer rapidement plusieurs outils CLI de code pour améliorer l'efficacité du développement",
     "env_vars_help": "Saisissez les variables d'environnement personnalisées (une par ligne, format : KEY=value)",
     "environment_variables": "variables d'environnement",
@@ -684,7 +694,10 @@
     "model_placeholder": "Sélectionnez le modèle à utiliser",
     "model_required": "Veuillez sélectionner le modèle",
     "select_folder": "Sélectionner le dossier",
+    "set_custom_path": "Définir un chemin de terminal personnalisé",
     "supported_providers": "fournisseurs pris en charge",
+    "terminal": "Terminal",
+    "terminal_placeholder": "Choisir une application de terminal",
     "title": "Outils de code",
     "update_options": "Options de mise à jour",
     "working_directory": "répertoire de travail"
@@ -1063,10 +1076,6 @@
       "error": {
         "failed": "Erreur lors de la migration"
       },
-      "migrate_to_langchain": {
-        "content": "La migration de la base de connaissances ne supprime pas l'ancienne base, mais crée une copie avant de retraiter tous les éléments, ce qui peut consommer un grand nombre de tokens. Veuillez agir avec prudence.",
-        "info": "L'architecture de la base de connaissances a été mise à jour, cliquez pour migrer vers la nouvelle architecture."
-      },
       "source_dimensions": "Dimensions source",
       "source_model": "Modèle source",
       "target_dimensions": "Dimensions cible",
@@ -1085,20 +1094,6 @@
     "quota": "Quota restant pour {{name}} : {{quota}}",
     "quota_infinity": "Quota restant pour {{name}} : illimité",
     "rename": "Renommer",
-    "retriever": "Mode de recherche",
-    "retriever_bm25": "Recherche plein texte",
-    "retriever_bm25_desc": "Rechercher des documents en fonction de la pertinence et de la fréquence des mots-clés.",
-    "retriever_hybrid": "Recherche hybride (recommandé)",
-    "retriever_hybrid_desc": "Associez la recherche par mots-clés et la recherche sémantique pour une précision de recherche optimale.",
-    "retriever_hybrid_weight": {
-      "bm25": "texte intégral",
-      "recommended": "Recommandé",
-      "title": "Ajustement des pondérations de recherche hybride (texte intégral/vecteur)",
-      "vector": "vecteur"
-    },
-    "retriever_tooltip": "Utiliser différentes méthodes de recherche pour interroger la base de connaissances",
-    "retriever_vector": "Recherche vectorielle",
-    "retriever_vector_desc": "Rechercher des documents selon la similarité sémantique et le sens.",
     "search": "Rechercher dans la base de connaissances",
     "search_placeholder": "Entrez votre requête",
     "settings": {
@@ -1708,7 +1703,7 @@
     "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce {{type}} ?",
     "delete_folder_confirm": "Êtes-vous sûr de vouloir supprimer le dossier \"{{name}}\" et tout son contenu ?",
     "delete_note_confirm": "Êtes-vous sûr de vouloir supprimer la note \"{{name}}\" ?",
-    "drop_markdown_hint": "Déposez ici des fichiers ou dossiers Markdown pour les importer",
+    "drop_markdown_hint": "Déposez ici des fichiers ou dossiers .md pour les importer",
     "empty": "Aucune note pour le moment",
     "expand": "développer",
     "export_failed": "Échec de l'exportation vers la base de connaissances",
@@ -1745,15 +1740,15 @@
         "compress_content": "réduire la largeur des colonnes",
         "compress_content_description": "L'activation limitera le nombre de caractères par ligne, réduisant ainsi le contenu affiché à l'écran.",
         "default_font": "police par défaut",
-        "font_size": "[to be translated]:字体大小",
-        "font_size_description": "[to be translated]:调整字体大小以获得更好的阅读体验 (10-30px)",
-        "font_size_large": "[to be translated]:大",
-        "font_size_medium": "[to be translated]:中",
-        "font_size_small": "[to be translated]:小",
+        "font_size": "Taille de police",
+        "font_size_description": "Ajuster la taille de la police pour une meilleure expérience de lecture (10-30px)",
+        "font_size_large": "Grand",
+        "font_size_medium": "中",
+        "font_size_small": "petit",
         "font_title": "paramétrage des polices",
         "serif_font": "police à empattements",
-        "show_table_of_contents": "[to be translated]:显示目录大纲",
-        "show_table_of_contents_description": "[to be translated]:显示目录大纲侧边栏，方便文档内导航",
+        "show_table_of_contents": "Afficher le plan du sommaire",
+        "show_table_of_contents_description": "Afficher la barre latérale de la table des matières pour faciliter la navigation dans le document",
         "title": "Paramètres d'affichage"
       },
       "editor": {
@@ -1781,7 +1776,7 @@
     "sort_updated_asc": "Heure de mise à jour (du plus ancien au plus récent)",
     "sort_updated_desc": "Date de mise à jour (du plus récent au plus ancien)",
     "sort_z2a": "Nom de fichier (Z-A)",
-    "star": "Favori",
+    "star": "Notes enregistrées",
     "starred_notes": "notes de collection",
     "title": "notes",
     "unsaved_changes": "Vous avez des modifications non enregistrées, êtes-vous sûr de vouloir quitter ?",
@@ -3115,6 +3110,13 @@
           "label": "CSS personnalisé",
           "placeholder": "/* Écrire votre CSS personnalisé ici */"
         }
+      },
+      "font": {
+        "code": "police de code",
+        "default": "Par défaut",
+        "global": "Police de caractère globale",
+        "select": "Sélectionner la police",
+        "title": "Paramètres de police"
       },
       "navbar": {
         "position": {

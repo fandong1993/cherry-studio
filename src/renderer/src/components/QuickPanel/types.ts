@@ -1,5 +1,18 @@
 import React from 'react'
 
+export enum QuickPanelReservedSymbol {
+  Root = '/',
+  File = 'file',
+  KnowledgeBase = '#',
+  MentionModels = '@',
+  QuickPhrases = 'quick-phrases',
+  Thinking = 'thinking',
+  WebSearch = '?',
+  Mcp = 'mcp',
+  McpPrompt = 'mcp-prompt',
+  McpResource = 'mcp-resource'
+}
+
 export type QuickPanelCloseAction = 'enter' | 'click' | 'esc' | 'outsideclick' | 'enter_empty' | string | undefined
 export type QuickPanelTriggerInfo = {
   type: 'input' | 'button'
@@ -8,13 +21,10 @@ export type QuickPanelTriggerInfo = {
 }
 
 export type QuickPanelCallBackOptions = {
-  symbol: string
+  context: QuickPanelContextType
   action: QuickPanelCloseAction
   item: QuickPanelListItem
   searchText?: string
-  /** 是否处于多选状态 */
-  multiple?: boolean
-  triggerInfo?: QuickPanelTriggerInfo
 }
 
 export type QuickPanelOpenOptions = {
